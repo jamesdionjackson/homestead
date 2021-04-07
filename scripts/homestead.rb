@@ -2,7 +2,7 @@
 class Homestead
   def self.configure(config, settings)
     # Set The VM Provider
-    ENV['VAGRANT_DEFAULT_PROVIDER'] = settings['provider'] ||= 'virtualbox'
+    ENV['VAGRANT_DEFAULT_PROVIDER'] = settings['provider'] ||= 'hyperv'
 
     # Configure Local Variable To Access Scripts From Remote Location
     script_dir = File.dirname(__FILE__)
@@ -87,6 +87,9 @@ class Homestead
       if Vagrant.has_plugin?('vagrant-hostmanager')
         override.hostmanager.ignore_private_ip = true
       end
+
+      # Disable the default Vagrant file share
+      config.vm.synced_folder ".", "/vagrant", disabled: true
     end
 
     # Configure A Few Parallels Settings
@@ -201,6 +204,7 @@ class Homestead
           options.keys.each{|k| options[k.to_sym] = options.delete(k) }
 
           config.vm.synced_folder folder['map'], folder['to'], type: folder['type'] ||= nil, **options
+          #config.vm.synced_folder folder['map'], folder['to'], type: "smb"
 
           # Bindfs support to fix shared folder (NFS) permission issue on Mac
           if folder['type'] == 'nfs' && Vagrant.has_plugin?('vagrant-bindfs')
@@ -588,13 +592,6 @@ class Homestead
       end
     end
 
-    # Update Composer On Every Provision
-    config.vm.provision 'shell' do |s|
-      s.name = 'Update Composer'
-      s.inline = 'sudo chown -R vagrant:vagrant /usr/local/bin && sudo -u vagrant /usr/local/bin/composer self-update --no-progress && sudo chown -R vagrant:vagrant /home/vagrant/.composer/'
-      s.privileged = false
-    end
-
     # Add config file for ngrok
     config.vm.provision 'shell' do |s|
       s.path = script_dir + '/create-ngrok.sh'
@@ -624,6 +621,14 @@ class Homestead
         s.inline = 'sudo sh -c "echo 0 >> /sys/block/sda/queue/iosched/group_idle"'
       end
     end
+
+    # Update Composer On Every Provision
+    config.vm.provision 'shell' do |s|
+      s.name = 'Update Composer'
+      s.inline = 'sudo chown -R vagrant:vagrant /usr/local/bin && sudo -u vagrant /usr/local/bin/composer self-update --no-progress && sudo chown -R vagrant:vagrant /home/vagrant/.composer/'
+      s.privileged = false
+    end
+
   end
 
   def self.backup_mysql(database, dir, config)
