@@ -65,4 +65,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     end
 
+    # Update hosts after vagrant up
+    config.trigger.after :up do |trigger|
+      trigger.name = 'powershell scripts/update_hosts.ps1'
+      trigger.run = {inline: "powershell scripts/update_hosts.ps1"}
+    end
+
 end
