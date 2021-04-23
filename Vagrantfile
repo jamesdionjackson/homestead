@@ -65,10 +65,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     end
 
+    # # Create Hyper-V switch if it does not exist
+    # config.trigger.before :up do |trigger|
+    #     trigger.info = "Creating 'NATSwitch' Hyper-V switch if it does not exist..."
+
+    #     trigger.run = {privileged: "true", powershell_elevated_interactive: "true", path: "./scripts/create-nat-hyperv-switch.ps1"}
+    # end
+
+    # # Swap Hyper-V switch
+    # config.trigger.before :reload do |trigger|
+    #     trigger.info = "Setting Hyper-V switch to 'NATSwitch' to allow for static IP..."
+
+    #     trigger.run = {privileged: "true", powershell_elevated_interactive: "true", path: "./scripts/set-hyperv-switch.ps1"}
+    # end
+
     # Update hosts after vagrant up
     config.trigger.after :up do |trigger|
       trigger.name = 'powershell scripts/update_hosts.ps1'
       trigger.run = {inline: "powershell scripts/update_hosts.ps1"}
     end
+
+    # config.vm.provision "shell", path: "./scripts/configure-static-ip.sh"
+    # config.vm.provision :reload
 
 end
