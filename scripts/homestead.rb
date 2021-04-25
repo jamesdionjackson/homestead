@@ -2,7 +2,7 @@
 class Homestead
   def self.configure(config, settings)
     # Set The VM Provider
-    ENV['VAGRANT_DEFAULT_PROVIDER'] = settings['provider'] ||= 'hyperv'
+    ENV['VAGRANT_DEFAULT_PROVIDER'] = settings['provider'] ||= 'virtualbox'
 
     # Configure Local Variable To Access Scripts From Remote Location
     script_dir = File.dirname(__FILE__)

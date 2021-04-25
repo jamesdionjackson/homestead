@@ -79,11 +79,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #     trigger.run = {privileged: "true", powershell_elevated_interactive: "true", path: "./scripts/set-hyperv-switch.ps1"}
     # end
 
-    # Update hosts after vagrant up
-    config.trigger.after :up do |trigger|
-      trigger.name = 'powershell scripts/update_hosts.ps1'
-      trigger.run = {inline: "powershell scripts/update_hosts.ps1"}
-    end
+    # # Update hosts after vagrant up
+    # config.trigger.after :up do |trigger|
+    #   trigger.name = 'powershell scripts/update_hosts.ps1'
+    #   trigger.run = {inline: "powershell scripts/update_hosts.ps1"}
+    # end
 
     # config.vm.provision "shell", path: "./scripts/configure-static-ip.sh"
     # config.vm.provision :reload
